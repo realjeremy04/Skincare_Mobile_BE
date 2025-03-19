@@ -39,6 +39,10 @@ const AccountSchema = new Schema<IAccount>(
       type: Boolean,
       default: true,
     },
+    firstTimeLogin: {
+      type: Boolean,
+      default: true,
+    }
   },
   { timestamps: true }
 );

@@ -52,35 +52,36 @@ const auth = (req: AuthRequest, res: Response, next: NextFunction): void => {
     res.status(500).json({ error: "Authentication error" });
   }
 };
-// const auth = (req: AuthRequest, res: Response, next: NextFunction): void => {
-//   const token = req.cookies.jwt;
 
-//   if (!token) {
-//     res.status(401).json({ error: "Authentication required" });
-//     return;
-//   }
+const authWithCookies = (req: AuthRequest, res: Response, next: NextFunction): void => {
+  const token = req.cookies.jwt;
 
-//   try {
-//     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
-//     req.user = decoded; // Attach decoded payload to req.user
-//     next();
-//   } catch (error) {
-//     console.error(
-//       "JWT verification error:",
-//       error instanceof Error ? error.stack : error
-//     );
-//     if (error instanceof jwt.TokenExpiredError) {
-//       res.status(401).json({ error: "Token expired" });
-//       return;
-//     }
-//     if (error instanceof jwt.JsonWebTokenError) {
-//       res.status(401).json({ error: "Invalid token" });
-//       return;
-//     }
-//     // Handle unexpected errors
-//     res.status(500).json({ error: "Authentication error" });
-//   }
-// };
+  if (!token) {
+    res.status(401).json({ error: "Authentication required" });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    req.user = decoded; // Attach decoded payload to req.user
+    next();
+  } catch (error) {
+    console.error(
+      "JWT verification error:",
+      error instanceof Error ? error.stack : error
+    );
+    if (error instanceof jwt.TokenExpiredError) {
+      res.status(401).json({ error: "Token expired" });
+      return;
+    }
+    if (error instanceof jwt.JsonWebTokenError) {
+      res.status(401).json({ error: "Invalid token" });
+      return;
+    }
+    // Handle unexpected errors
+    res.status(500).json({ error: "Authentication error" });
+  }
+};
 
 const checkActive = async (
   req: AuthRequest,
@@ -212,6 +213,7 @@ const isStaffOrAdmin = (
 // Export as ES6 module
 export {
   auth,
+  authWithCookies,
   checkActive,
   isAdmin,
   isStaff,
