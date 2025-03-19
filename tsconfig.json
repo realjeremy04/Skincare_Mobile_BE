@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "outDir": "./dist",
+    "rootDir": "./",
+    "module": "CommonJS",
+    "target": "ES6",
+    "strict": true,
+    "baseUrl": "./",
+    "paths": {
+      "$root/*": ["./*"],
+      "$models/*": ["./models/*"],
+      "$database/*": ["./database/*"],
+      "$controllers/*": ["./controllers/*"],
+      "$configs/*": ["./configs/*"],
+      "$middlewares/*": ["./middlewares/*"],
+      "$services/*": ["./services/*"],
+      "$utils/*": ["./utils/*"],
+      "$routes/*": ["./routes/*"],
+      "$helpers/*": ["./helpers/*"],
+      "$types/*": ["./types/*"]
+    }
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
