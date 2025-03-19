@@ -522,9 +522,46 @@ interface UpdateAccountBody {
   role?: string;
   dob?: string;
   phone?: string;
+  id: string;
 }
 
 const updateAccount = async (
+  req: AuthenticatedRequest & { body: UpdateAccountBody },
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  if (!req.user) {
+    return next(new AppError("Authentication required", 401));
+  }
+
+  try {
+    const updates = req.body;
+    if (Object.keys(updates).length === 0) {
+      return next(new AppError("No update data provided", 400));
+    }
+
+    const user = await Account.findByIdAndUpdate(req.body.id, updates, {
+      new: true,
+      runValidators: true,
+    });
+    if (!user) {
+      return next(new AppError("Account not found", 404));
+    }
+
+    res.status(200).json({
+      message: "Account updated successfully",
+      user,
+    });
+  } catch (error) {
+    console.error(
+      "Update account error:",
+      error instanceof Error ? error.stack : error
+    );
+    return next(new AppError("Internal Server Error", 500));
+  }
+};
+
+const updateAccountAdmin = async (
   req: AuthenticatedRequest & { body: UpdateAccountBody },
   res: Response,
   next: NextFunction
@@ -1023,6 +1060,7 @@ const AccountAPI = {
   createAccount,
   deleteAccount,
   updateAccount,
+  updateAccountAdmin,
   login,
   logout,
   register,

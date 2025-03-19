@@ -12,7 +12,7 @@ router.post("/", AccountAPI.createAccount);
 
 //Admin routes
 router.get("/", auth, checkActive, isAdmin, AccountAPI.getAllAccounts);
-router.put("/:id", auth, isAdmin, AccountAPI.updateAccount);
+router.put("/:id", auth, isAdmin, AccountAPI.updateAccountAdmin);
 router.delete("/:id", auth, isAdmin, AccountAPI.deleteAccount);
 
 router.get("/profile", auth, checkActive, AccountAPI.getAccount);
