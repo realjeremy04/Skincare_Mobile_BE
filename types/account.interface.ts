@@ -8,4 +8,5 @@ export interface IAccount {
   dob: Date;
   phone: string;
   isActive: boolean;
+  firstTimeLogin: boolean;
 }
