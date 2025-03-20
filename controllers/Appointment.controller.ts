@@ -587,6 +587,7 @@ const getAppointmentsByAccountId = async (
     const appointments = await Appointment.find({
       therapistId: therapist._id,
     })
+      .sort({ createdAt: -1 })
       .populate("therapistId")
       .populate("customerId")
       .populate("serviceId")
