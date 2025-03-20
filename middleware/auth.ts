@@ -20,21 +20,23 @@ interface AuthRequest extends Request {
 const auth = (req: AuthRequest, res: Response, next: NextFunction): void => {
   const authHeader = req.headers.authorization;
 
+  console.log("authHeader", req.headers);
+
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    res.status(401).json({ error: "Authentication required" });
+    res.status(401).json({ error: "Authentication required 1" });
     return;
   }
 
   const token = authHeader.split(" ")[1];
 
   if (!token) {
-    res.status(401).json({ error: "Authentication required" });
+    res.status(401).json({ error: "Authentication required 2" });
     return;
   }
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
-    req.user = decoded; 
+    req.user = decoded;
     next();
   } catch (error) {
     console.error(
@@ -53,7 +55,11 @@ const auth = (req: AuthRequest, res: Response, next: NextFunction): void => {
   }
 };
 
-const authWithCookies = (req: AuthRequest, res: Response, next: NextFunction): void => {
+const authWithCookies = (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): void => {
   const token = req.cookies.jwt;
 
   if (!token) {
