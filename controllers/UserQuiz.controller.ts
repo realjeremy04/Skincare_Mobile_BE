@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import UserQuiz from "$models/UserQuiz.model";
 import AppError from "$root/utils/AppError.util";
+import { Types } from "mongoose";
 
 /**
  * @swagger
@@ -106,7 +107,6 @@ const getAllUserQuizzes = async (
  *       500:
  *         description: Server error
  */
-import { Types } from "mongoose";
 
 const getUserQuiz = async (
   req: Request,
@@ -138,6 +138,91 @@ const getUserQuiz = async (
   }
 };
 
+// Get user quiz by Customer
+/**
+ * @swagger
+ * /api/userQuiz/by-account:
+ *   get:
+ *     summary: Get quizzes by account ID
+ *     description: Retrieves all quizzes associated with a specific account ID
+ *     tags:
+ *       - UserQuiz
+ *     parameters:
+ *       - in: query
+ *         name: accountId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the account to fetch quizzes for
+ *     responses:
+ *       200:
+ *         description: Quizzes retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                   accountId:
+ *                     $ref: '#/components/schemas/Account'
+ *                   scoreBandId:
+ *                     $ref: '#/components/schemas/ScoreBand'
+ *                   # Add other UserQuiz fields as needed
+ *       400:
+ *         description: Invalid or missing account ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: No quizzes found for this account
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+
+const getUserQuizByCustomer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { accountId } = req.query as { accountId?: string };
+
+    // Validate accountId
+    if (!accountId) {
+      return next(new AppError("Missing account ID", 400));
+    }
+    if (!Types.ObjectId.isValid(accountId)) {
+      return next(new AppError("Invalid account ID format", 400));
+    }
+
+    const userQuizzes = await UserQuiz.find({
+      accountId: new Types.ObjectId(accountId),
+    })
+      .populate("accountId")
+      .populate("scoreBandId");
+
+    if (!userQuizzes || userQuizzes.length === 0) {
+      return next(new AppError("No quizzes found for this account", 404));
+    }
+
+    res.status(200).json(userQuizzes);
+  } catch (err: any) {
+    console.error("Error fetching user quizzes:", err);
+    return next(new AppError("Internal Server Error", 500));
+  }
+};
 
 // Create a new user quiz
 /**
@@ -168,7 +253,11 @@ const getUserQuiz = async (
 // import mongoose from "mongoose";
 import { validationResult } from "express-validator";
 
-export const createUserQuiz = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const createUserQuiz = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(new AppError(errors.array()[0].msg, 400));
@@ -177,10 +266,11 @@ export const createUserQuiz = async (req: Request, res: Response, next: NextFunc
   try {
     const userQuiz = new UserQuiz(req.body);
     const newUserQuiz = await userQuiz.save();
-    res.status(201).json({ message: "UserQuiz created successfully", newUserQuiz });
+    res
+      .status(201)
+      .json({ message: "UserQuiz created successfully", newUserQuiz });
   } catch (error) {
     console.log("Request Body:", req.body);
-
 
     next(new AppError("Failed to create UserQuiz", 500));
   }
@@ -222,25 +312,34 @@ export const createUserQuiz = async (req: Request, res: Response, next: NextFunc
  *       500:
  *         description: Server error
  */
-export const updateUserQuiz = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const updateUserQuiz = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(new AppError(errors.array()[0].msg, 400));
   }
 
   try {
-    const updatedUserQuiz = await UserQuiz.findByIdAndUpdate(req.params.userQuizId, req.body, { new: true });
+    const updatedUserQuiz = await UserQuiz.findByIdAndUpdate(
+      req.params.userQuizId,
+      req.body,
+      { new: true }
+    );
 
     if (!updatedUserQuiz) {
       return next(new AppError("UserQuiz not found", 404));
     }
 
-    res.status(200).json({ message: "UserQuiz updated successfully", updatedUserQuiz });
+    res
+      .status(200)
+      .json({ message: "UserQuiz updated successfully", updatedUserQuiz });
   } catch (error) {
     next(new AppError("Failed to update UserQuiz", 500));
   }
 };
-
 
 // Delete a user quiz
 /**
@@ -298,14 +397,20 @@ export const updateUserQuiz = async (req: Request, res: Response, next: NextFunc
  *                 message:
  *                   type: string
  */
-export const deleteUserQuiz = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const deleteUserQuiz = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(new AppError(errors.array()[0].msg, 400));
   }
 
   try {
-    const deletedUserQuiz = await UserQuiz.findByIdAndDelete(req.params.userQuizId);
+    const deletedUserQuiz = await UserQuiz.findByIdAndDelete(
+      req.params.userQuizId
+    );
 
     if (!deletedUserQuiz) {
       return next(new AppError("UserQuiz not found", 404));
@@ -320,6 +425,7 @@ export const deleteUserQuiz = async (req: Request, res: Response, next: NextFunc
 const UserQuizAPI = {
   getAllUserQuizzes,
   getUserQuiz,
+  getUserQuizByCustomer,
   createUserQuiz,
   updateUserQuiz,
   deleteUserQuiz,

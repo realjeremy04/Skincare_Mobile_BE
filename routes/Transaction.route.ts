@@ -1,5 +1,5 @@
 import TransactionAPI from "$root/controllers/Transaction.controller";
-import { auth, checkActive, isStaffOrAdmin } from "$root/middleware/auth";
+import { auth, authWithCookies, checkActive, isStaffOrAdmin } from "$root/middleware/auth";
 import { Router } from "express";
 
 const router = Router();
@@ -16,7 +16,7 @@ router.get(
 router.delete("/:transactionId", TransactionAPI.deleteTransaction);
 router.put(
   "/:transactionId",
-  auth,
+  authWithCookies,
   checkActive,
   isStaffOrAdmin,
   TransactionAPI.updateTransaction

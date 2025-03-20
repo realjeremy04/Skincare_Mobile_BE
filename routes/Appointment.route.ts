@@ -1,6 +1,12 @@
 import AppointmentAPI from "$root/controllers/Appointment.controller";
 import { multipleImagesMiddleware } from "$root/middleware/upload";
-import { auth, checkActive, isTherapistOrStaff } from "$root/middleware/auth";
+import {
+  auth,
+  authWithCookies,
+  checkActive,
+  isTherapist,
+  isTherapistOrStaff,
+} from "$root/middleware/auth";
 import { Router } from "express";
 
 const router = Router();
@@ -13,9 +19,18 @@ router.get("/account/:accountId", AppointmentAPI.getAppointmentsByAccountId);
 router.delete("/:id", AppointmentAPI.deleteAppointment);
 router.patch(
   "/:id",
-  auth,
+  authWithCookies,
   checkActive,
   isTherapistOrStaff,
+  multipleImagesMiddleware,
+  AppointmentAPI.updateAppointment
+);
+
+router.patch(
+  "/JWT/:id",
+  auth,
+  checkActive,
+  isTherapist,
   multipleImagesMiddleware,
   AppointmentAPI.updateAppointment
 );
