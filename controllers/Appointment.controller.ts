@@ -357,6 +357,79 @@ const deleteAppointment = async (
  *                   type: string
  *                   example: "Internal Server Error"
  */
+
+/**
+ * @swagger
+ * /api/appointment/JWT/{id}:
+ *   patch:
+ *     summary: Update an appointment by ID
+ *     description: This endpoint allows partial updating of an appointment including optional image uploads for check-in/check-out. If no new image is provided, existing images remain unchanged.
+ *     tags:
+ *       - Appointment
+ *     security:
+ *       - bearerAuth: []  # Nếu dùng auth
+ *     consumes:
+ *       - multipart/form-data
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the appointment to update
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: false  # PATCH nên không bắt buộc gửi dữ liệu
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               checkInImage:
+ *                 type: string
+ *                 format: binary
+ *                 description: Optional check-in image (JPEG, JPG, PNG only). Leave empty to keep existing image.
+ *               checkOutImage:
+ *                 type: string
+ *                 format: binary
+ *                 description: Optional check-out image (JPEG, JPG, PNG only). Leave empty to keep existing image.
+ *               status:
+ *                 type: string
+ *                 enum: [Scheduled, In Progress, Completed, Cancelled]
+ *                 description: Appointment status
+ *     responses:
+ *       200:
+ *         description: Appointment updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Appointment updated successfully"
+ *                 data:
+ *                   $ref: '#/components/schemas/Appointment'
+ *       404:
+ *         description: Appointment not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Appointment not found"
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal Server Error"
+ */
 const updateAppointment = async (
   req: AuthenticatedRequest,
   res: Response,

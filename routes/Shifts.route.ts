@@ -1,6 +1,7 @@
 import ShiftsAPI from "$root/controllers/Shifts.controller";
 import {
   auth,
+  authWithCookies,
   checkActive,
   isStaffOrAdmin,
   isTherapist,
@@ -10,7 +11,7 @@ import { Router } from "express";
 const router = Router();
 
 router.get("/", ShiftsAPI.getAllShifts);
-router.post("/", auth, checkActive, isStaffOrAdmin, ShiftsAPI.createShift);
+router.post("/", authWithCookies, checkActive, isStaffOrAdmin, ShiftsAPI.createShift);
 router.get("/:shiftId", ShiftsAPI.getShift);
 router.get("/therapist/:therapistId", ShiftsAPI.getShiftsByTherapistId);
 router.get(
@@ -26,14 +27,14 @@ router.get(
 );
 router.delete(
   "/:shiftId",
-  auth,
+  authWithCookies,
   checkActive,
   isStaffOrAdmin,
   ShiftsAPI.deleteShift
 );
 router.put(
   "/:shiftId",
-  auth,
+  authWithCookies,
   checkActive,
   isStaffOrAdmin,
   ShiftsAPI.updateShift

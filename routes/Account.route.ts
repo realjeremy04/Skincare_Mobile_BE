@@ -1,5 +1,10 @@
 import AccountAPI from "$root/controllers/Account.controller";
-import { auth, isAdmin, checkActive } from "$root/middleware/auth";
+import {
+  auth,
+  isAdmin,
+  checkActive,
+  authWithCookies,
+} from "$root/middleware/auth";
 import { Router } from "express";
 
 const router = Router();
@@ -12,12 +17,17 @@ router.get("/logout", AccountAPI.logout);
 router.post("/", AccountAPI.createAccount);
 
 //Admin routes
-router.get("/", auth, checkActive, isAdmin, AccountAPI.getAllAccounts);
-router.patch("/:id", auth, isAdmin, AccountAPI.updateAccountAdmin);
-router.delete("/:id", auth, isAdmin, AccountAPI.deleteAccount);
+router.get("/", authWithCookies, checkActive, isAdmin, AccountAPI.getAllAccounts);
+router.patch("/:id", authWithCookies, isAdmin, AccountAPI.updateAccountAdmin);
+router.delete("/:id", authWithCookies, isAdmin, AccountAPI.deleteAccount);
 
-router.get("/profile", auth, checkActive, AccountAPI.getAccount);
-router.patch("/updateProfile", auth, checkActive, AccountAPI.updateAccount);
-router.post("/changePassword", auth, checkActive, AccountAPI.changePassword);
+router.get("/profile", authWithCookies, checkActive, AccountAPI.getAccount);
+router.get("/profileJWT", auth, checkActive, AccountAPI.getAccount);
+
+router.patch("/updateProfile", authWithCookies, checkActive, AccountAPI.updateAccount);
+router.patch("/updateProfileJWT", auth, checkActive, AccountAPI.updateAccount);
+
+router.post("/changePassword", authWithCookies, checkActive, AccountAPI.changePassword);
+router.post("/changePasswordJWT", auth, checkActive, AccountAPI.changePassword);
 
 export default router;
