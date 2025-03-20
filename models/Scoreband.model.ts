@@ -4,6 +4,7 @@ import { IScoreband } from "$types/scoreband.interface";
 const ScorebandSchema = new Schema<IScoreband>({
   roadmapId: {
     type: Schema.Types.ObjectId,
+    ref: "Roadmap",
     required: true,
   },
   minPoint: {

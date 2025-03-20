@@ -210,12 +210,21 @@ const getUserQuizByCustomer = async (
     const userQuizzes = await UserQuiz.find({
       accountId: new Types.ObjectId(accountId),
     })
-      .populate("accountId")
-      .populate("scoreBandId");
+      .populate({
+        path: "accountId",
+        model: "Account", // Ensure this matches your Account model name
+      })
+      .populate({
+        path: "scoreBandId",
+        model: "Scoreband",
+      });
 
     if (!userQuizzes || userQuizzes.length === 0) {
       return next(new AppError("No quizzes found for this account", 404));
     }
+
+    // Log the result to verify population
+    console.log("Populated userQuizzes:", JSON.stringify(userQuizzes, null, 2));
 
     res.status(200).json(userQuizzes);
   } catch (err: any) {
