@@ -20,7 +20,7 @@ interface AuthRequest extends Request {
 const auth = (req: AuthRequest, res: Response, next: NextFunction): void => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!authHeader) {
     res.status(401).json({ error: "Authentication required" });
     return;
   }
