@@ -628,9 +628,7 @@ const updateAccount = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  if (!req.user) {
-    return next(new AppError("Authentication required", 401));
-  }
+
 
   try {
     const updates = req.body;
@@ -638,7 +636,7 @@ const updateAccount = async (
       return next(new AppError("No update data provided", 400));
     }
 
-    const user = await Account.findByIdAndUpdate(req.body.id, updates, {
+    const user = await Account.findByIdAndUpdate(req.params.id, updates, {
       new: true,
       runValidators: true,
     });
@@ -986,8 +984,8 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       return;
     }
 
-    const token = jwt.sign({ _id: user._id, role: user.role }, JWT_SECRET, {
-      expiresIn: "1d",
+    const token = jwt.sign({ _id: user._id, role: user.role }, JWT_SECRET,{
+      expiresIn: 86400,
     });
 
     // Remove res.cookie and return the token in the response
