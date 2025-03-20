@@ -18,7 +18,7 @@ connectMongo;
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:3000', 
+  origin: ['http://localhost:3000', 'http://localhost:8081', 'http://192.168.1.100.3:8081'],
   credentials: true, 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], 
   allowedHeaders: ['Content-Type'] 
