@@ -357,9 +357,11 @@ export const deleteTransaction = async (
  * @swagger
  * /api/transaction/customer/{customerId}:
  *   get:
- *     summary: Retrieve all transactions for a specific customer
+ *     summary: Get transactions for a specific customer
  *     tags:
  *       - Transaction
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: customerId
@@ -369,15 +371,19 @@ export const deleteTransaction = async (
  *         description: The customer ID
  *     responses:
  *       200:
- *         description: List of transactions for the customer
+ *         description: List of customer transactions
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Transaction'
+ *       401:
+ *         description: Unauthorized - Authentication required
+ *       403:
+ *         description: Forbidden - Account inactive
  *       404:
- *         description: No transactions found for this customer
+ *         description: No transactions found
  *       500:
  *         description: Server error
  */

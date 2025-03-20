@@ -24,8 +24,8 @@ router.delete("/:id", authWithCookies, isAdmin, AccountAPI.deleteAccount);
 router.get("/profile", authWithCookies, checkActive, AccountAPI.getAccount);
 router.get("/profileJWT", auth, checkActive, AccountAPI.getAccount);
 
-router.patch("/updateProfile", authWithCookies, checkActive, AccountAPI.updateAccount);
-router.patch("/updateProfileJWT", auth, checkActive, AccountAPI.updateAccount);
+router.patch("/updateProfile/id", authWithCookies, checkActive, AccountAPI.updateAccount);
+router.patch("/updateProfileJWT/:id", auth, checkActive, AccountAPI.updateAccount);
 
 router.post("/changePassword", authWithCookies, checkActive, AccountAPI.changePassword);
 router.post("/changePasswordJWT", auth, checkActive, AccountAPI.changePassword);
