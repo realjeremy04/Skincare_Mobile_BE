@@ -5,6 +5,7 @@ import Shifts from "$models/Shifts.model";
 import Service from "$models/Service.model";
 import AppError from "$root/utils/AppError.util";
 import { validationResult } from "express-validator";
+import { Payment } from "$root/types/transaction.interface";
 
 interface AuthenticatedRequest extends Request {
   user?: { _id: string; role: string };
@@ -396,17 +397,54 @@ const getTransactionsByCustomerId = async (
     const transactions = await Transaction.find({
       customerId: req.params.customerId,
     })
-      .populate("customerId", "email")
-      .populate("appointmentId", "_id");
+      .populate("customerId")
+      .populate({
+        path: "appointmentId",
+        populate: [
+          { path: "therapistId", populate: { path: "accountId" } },
+          { path: "serviceId" },
+          { path: "slotsId" },
+        ],
+      });
 
     if (!transactions || transactions.length === 0) {
       return next(new AppError("No transactions found for this customer", 404));
     }
 
+    const formattedTransactions = (transactions as unknown as Payment[]).map(
+      (transaction) => {
+        return {
+          _id: transaction._id,
+          therapist: {
+            therapistName:
+              transaction.appointmentId.therapistId.accountId.username,
+            therapistEmail:
+              transaction.appointmentId.therapistId.accountId.email,
+          },
+          userInfo: {
+            username: transaction.customerId.username,
+            email: transaction.customerId.email,
+            phone: transaction.customerId.phone,
+            dob: transaction.customerId.dob,
+          },
+          appointment: {
+            checkInImage: transaction.appointmentId.checkInImage,
+            checkOutImage: transaction.appointmentId.checkOutImage,
+            notes: transaction.appointmentId.notes,
+            amount: transaction.appointmentId.amount,
+            status: transaction.appointmentId.status,
+          },
+          service: {
+            serviceName: transaction.appointmentId.serviceId.serviceName,
+          },
+        };
+      }
+    );
+
     res.status(200).json({
       status: "success",
       results: transactions.length,
-      data: transactions,
+      data: formattedTransactions,
     });
   } catch (err: Error | any) {
     return next(new AppError("Internal Server Error", 500));
