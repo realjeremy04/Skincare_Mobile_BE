@@ -993,6 +993,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     res.status(200).json({
       message: "Login successful",
       user: {
+        id: user._id,
         username: user.username,
         email: user.email,
         dob: user.dob,
