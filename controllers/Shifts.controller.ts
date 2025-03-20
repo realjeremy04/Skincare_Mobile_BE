@@ -135,6 +135,8 @@ const getShift = async (
  *     summary: Create a new shift
  *     tags:
  *       - Shifts
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -186,6 +188,8 @@ const createShift = async (
  *     description: This endpoint allows the updating of an shift based on its ID. Returns the updated shift if successful.
  *     tags:
  *       - Shifts
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -244,6 +248,8 @@ const updateShift = async (
  *     description: This endpoint allows the deletion of an shift based on its ID. Returns the deleted shift if successful.
  *     tags:
  *       - Shifts
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -414,6 +420,8 @@ const getUpcomingShiftsByTherapistId = async (
  *     summary: Retrieve shifts for today by accountId
  *     tags:
  *       - Shifts
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: accountId
@@ -464,6 +472,13 @@ const getUpcomingShiftsByAccountId = async (
         path: "therapistId",
         populate: {
           path: "specialization",
+        },
+      })
+      .populate({
+        path: "appointmentId",
+        populate: {
+          path: "serviceId",
+          select: "serviceName",
         },
       });
 
