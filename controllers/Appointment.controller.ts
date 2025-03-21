@@ -84,7 +84,15 @@ const getAllAppointment = async (
 ): Promise<void> => {
   try {
     const appointments = await Appointment.find()
-      .populate("therapistId")
+      .populate({
+        path: "therapistId",
+        model: "Therapist",
+        populate: {
+          path: "accountId", // Populate the accountId field within therapistId
+          model: "Account"   // Replace "Account" with the actual model name if different
+        }
+      }
+      )
       .populate("customerId")
       .populate("serviceId")
       .populate("slotsId");
