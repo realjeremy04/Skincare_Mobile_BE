@@ -494,6 +494,13 @@ const deleteAccount = async (
  *       - Accounts
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the account to update
  *     requestBody:
  *       required: true
  *       content:
