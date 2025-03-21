@@ -5,10 +5,12 @@ const userQuizSchema = new Schema<IUserQuiz>(
   {
     accountId: {
       type: Schema.Types.ObjectId,
+      ref: "Account", 
       required: true,
     },
     scoreBandId: {
       type: Schema.Types.ObjectId,
+      ref: "Scoreband", 
       required: true,
     },
     result: [
