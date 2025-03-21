@@ -130,6 +130,8 @@ const getTransaction = async (
  *     summary: Create a new transaction with appointment
  *     tags:
  *       - Transaction
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
