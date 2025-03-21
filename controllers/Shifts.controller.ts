@@ -476,10 +476,20 @@ const getUpcomingShiftsByAccountId = async (
       })
       .populate({
         path: "appointmentId",
-        populate: {
-          path: "serviceId",
-          select: "serviceName",
-        },
+        populate: [
+          {
+            path: "serviceId",
+            select: "serviceName",
+          },
+          {
+            path: "customerId",
+            select: "username",
+          },
+          {
+            path: "slotsId",
+            select: "startTime endTime",
+          },
+        ],
       });
 
     res.status(200).json(shifts);
