@@ -577,6 +577,8 @@ const deleteAccount = async (
  *               dob:
  *                 type: string
  *                 format: date
+ *               phone:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Account updated successfully
@@ -628,8 +630,6 @@ const updateAccount = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-
-
   try {
     const updates = req.body;
     if (Object.keys(updates).length === 0) {
@@ -984,7 +984,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       return;
     }
 
-    const token = jwt.sign({ _id: user._id, role: user.role }, JWT_SECRET,{
+    const token = jwt.sign({ _id: user._id, role: user.role }, JWT_SECRET, {
       expiresIn: 86400,
     });
 
